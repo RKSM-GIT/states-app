@@ -11,6 +11,16 @@ h1 {
     margin-bottom: 1.5rem;
 }
 
+.error-message {
+    background-color: #fee;
+    color: #c33;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #c33;
+    font-size: 0.95rem;
+}
+
 .dropdowns {
     display: flex;
     gap: 1rem;

@@ -12,13 +12,25 @@ export function useLocationData() {
     const [selectedCity, setSelectedCity] = useState("");
 
     const [loading, setLoading] = useState({ countries: false, states: false, cities: false });
+    const [error, setError] = useState({ countries: null, states: null, cities: null });
 
     // Fetch countries on mount
     useEffect(() => {
         setLoading((l) => ({ ...l, countries: true }));
+        setError((e) => ({ ...e, countries: null }));
         fetch(`${BASE_URL}/countries`)
-            .then((r) => r.json())
+            .then((r) => {
+                if (!r.ok) {
+                    throw new Error(`HTTP error! status: ${r.status}`);
+                }
+                return r.json();
+            })
             .then(setCountries)
+            .catch((err) => {
+                console.error("Failed to fetch countries:", err);
+                setError((e) => ({ ...e, countries: err.message }));
+                setCountries([]);
+            })
             .finally(() => setLoading((l) => ({ ...l, countries: false })));
     }, []);
 
@@ -30,9 +42,20 @@ export function useLocationData() {
         setSelectedState("");
         setSelectedCity("");
         setLoading((l) => ({ ...l, states: true }));
+        setError((e) => ({ ...e, states: null }));
         fetch(`${BASE_URL}/country=${selectedCountry}/states`)
-            .then((r) => r.json())
+            .then((r) => {
+                if (!r.ok) {
+                    throw new Error(`HTTP error! status: ${r.status}`);
+                }
+                return r.json();
+            })
             .then(setStates)
+            .catch((err) => {
+                console.error("Failed to fetch states:", err);
+                setError((e) => ({ ...e, states: err.message }));
+                setStates([]);
+            })
             .finally(() => setLoading((l) => ({ ...l, states: false })));
     }, [selectedCountry]);
 
@@ -42,9 +65,20 @@ export function useLocationData() {
         setCities([]);
         setSelectedCity("");
         setLoading((l) => ({ ...l, cities: true }));
+        setError((e) => ({ ...e, cities: null }));
         fetch(`${BASE_URL}/country=${selectedCountry}/state=${selectedState}/cities`)
-            .then((r) => r.json())
+            .then((r) => {
+                if (!r.ok) {
+                    throw new Error(`HTTP error! status: ${r.status}`);
+                }
+                return r.json();
+            })
             .then(setCities)
+            .catch((err) => {
+                console.error("Failed to fetch cities:", err);
+                setError((e) => ({ ...e, cities: err.message }));
+                setCities([]);
+            })
             .finally(() => setLoading((l) => ({ ...l, cities: false })));
     }, [selectedState]);
 
@@ -53,5 +87,6 @@ export function useLocationData() {
         selectedCountry, selectedState, selectedCity,
         setSelectedCountry, setSelectedState, setSelectedCity,
         loading,
+        error,
     };
 }

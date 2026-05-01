@@ -7,18 +7,25 @@ export default function LocationSelector() {
         selectedCountry, selectedState, selectedCity,
         setSelectedCountry, setSelectedState, setSelectedCity,
         loading,
+        error,
     } = useLocationData();
 
     return (
         <div className="location-wrapper">
             <h1>Select Location</h1>
 
+            {error.countries && (
+                <div className="error-message">
+                    Failed to load countries. Please try again.
+                </div>
+            )}
+
             <div className="dropdowns">
                 {/* Country */}
                 <select
                     value={selectedCountry}
                     onChange={(e) => setSelectedCountry(e.target.value)}
-                    disabled={loading.countries}
+                    disabled={loading.countries || error.countries}
                 >
                     <option value="">Select Country</option>
                     {countries.map((country) => (
@@ -32,7 +39,7 @@ export default function LocationSelector() {
                 <select
                     value={selectedState}
                     onChange={(e) => setSelectedState(e.target.value)}
-                    disabled={!selectedCountry || loading.states}
+                    disabled={!selectedCountry || loading.states || error.states}
                 >
                     <option value="">Select State</option>
                     {states.map((state) => (
@@ -46,7 +53,7 @@ export default function LocationSelector() {
                 <select
                     value={selectedCity}
                     onChange={(e) => setSelectedCity(e.target.value)}
-                    disabled={!selectedState || loading.cities}
+                    disabled={!selectedState || loading.cities || error.cities}
                 >
                     <option value="">Select City</option>
                     {cities.map((city) => (
@@ -56,6 +63,18 @@ export default function LocationSelector() {
                     ))}
                 </select>
             </div>
+
+            {error.states && (
+                <div className="error-message">
+                    Failed to load states. Please select a different country.
+                </div>
+            )}
+
+            {error.cities && (
+                <div className="error-message">
+                    Failed to load cities. Please select a different state.
+                </div>
+            )}
 
             {selectedCity && (
                 <p className="result">
